@@ -1,51 +1,54 @@
-import { randomUUID } from 'node:crypto'
+import { randomUUID } from "node:crypto";
 
-import data from "../../data.json" with { type: "json" };
+import { createRequire } from "node:module";
+const require = createRequire(import.meta.url);
+
+const data = require("../../data.json");
 
 export class MovieModel {
-  static async getAll ({ genre }) {
+  static async getAll({ genre }) {
     if (genre) {
-      return data.filter(
-        movie => movie.genre.some(g => g.toLowerCase() === genre.toLowerCase())
-      )
+      return data.filter((movie) =>
+        movie.genre.some((g) => g.toLowerCase() === genre.toLowerCase())
+      );
     }
 
-    return data
+    return data;
   }
 
-  static async getById ({ id }) {
-    const movie = data.find(movie => movie.id === id)
-    return movie
+  static async getById({ id }) {
+    const movie = data.find((movie) => movie.id === id);
+    return movie;
   }
 
-  static async create ({ input }) {
+  static async create({ input }) {
     const newMovie = {
       id: randomUUID(),
-      ...input
-    }
+      ...input,
+    };
 
-    data.push(newMovie)
+    data.push(newMovie);
 
-    return newMovie
+    return newMovie;
   }
 
-  static async delete ({ id }) {
-    const movieIndex = data.findIndex(movie => movie.id === id)
-    if (movieIndex === -1) return false
+  static async delete({ id }) {
+    const movieIndex = data.findIndex((movie) => movie.id === id);
+    if (movieIndex === -1) return false;
 
-    data.splice(movieIndex, 1)
-    return true
+    data.splice(movieIndex, 1);
+    return true;
   }
 
-  static async update ({ id, input }) {
-    const movieIndex = data.findIndex(movie => movie.id === id)
-    if (movieIndex === -1) return false
+  static async update({ id, input }) {
+    const movieIndex = data.findIndex((movie) => movie.id === id);
+    if (movieIndex === -1) return false;
 
     data[movieIndex] = {
       ...data[movieIndex],
-      ...input
-    }
+      ...input,
+    };
 
-    return data[movieIndex]
+    return data[movieIndex];
   }
 }
