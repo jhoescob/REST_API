@@ -1,4 +1,4 @@
-import { pool } from "../mysql/dbConfig.js";
+import pool from "./dbConfig.js";
 
 export class MovieModel {
   static async getAll() {
