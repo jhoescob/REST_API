@@ -1,15 +1,17 @@
 import { Router } from "express";
 
-import { MovieController } from "../controller/controller.js";
+import { Controller } from "../controller/controller.js";
 
-export const moviesRouter = Router();
+export const createMovieRouter = ({ modelIn }) => {
+  const router = Router();
 
-moviesRouter.get("/", MovieController.getAll);
+  const controller = new Controller({ model: modelIn });
 
-moviesRouter.get("/:id", MovieController.getById);
+  router.get("/", controller.getAll);
+  router.get("/:id", controller.getById);
+  router.post("/", controller.create);
+  router.put("/", controller.update);
+  router.delete("", controller.delete);
 
-moviesRouter.post("/", MovieController.create);
-
-moviesRouter.put("/", MovieController.update);
-
-moviesRouter.delete("/", MovieController.delete);
+  return router;
+};
