@@ -1,15 +1,15 @@
-import { connection } from "../mysql/dbConfig.js";
+import { pool } from "../mysql/dbConfig.js";
 
 export class MovieModel {
   static async getAll() {
-    const [movies] = await connection.query(
+    const [movies] = await pool.query(
       "SELECT id, title,year, director, duration, poster,rate FROM movies;"
     );
     return movies;
   }
 
   static async getById({ id }) {
-    const [movies] = await connection.query(
+    const [movies] = await pool.query(
       `SELECT title, year, director, duration, poster, rate, id
           FROM movies WHERE id = ?;`,
       [id]
@@ -25,7 +25,7 @@ export class MovieModel {
     const uuid = crypto.randomUUID();
 
     try {
-      await connection.query(
+      await pool.query(
         `INSERT INTO movies (id, title, year, director, duration, poster, rate)
             VALUES (?, ?, ?, ?, ?, ?, ?);`,
         [uuid, title, year, director, duration, poster, rate]
@@ -34,7 +34,7 @@ export class MovieModel {
       throw new Error("Error creating movie: " + e.message);
     }
 
-    const [movies] = await connection.query(
+    const [movies] = await pool.query(
       `SELECT title, year, director, duration, poster, rate, id
           FROM movies WHERE id = ?;`,
       [uuid]
@@ -45,10 +45,9 @@ export class MovieModel {
 
   static async delete({ id }) {
     try {
-      const [result] = await connection.query(
-        `DELETE FROM movies WHERE id = ?;`,
-        [id]
-      );
+      const [result] = await pool.query(`DELETE FROM movies WHERE id = ?;`, [
+        id,
+      ]);
     } catch (e) {
       throw new Error(`Error deleting movie: ${e.message}`);
     }
@@ -60,7 +59,7 @@ export class MovieModel {
     const { title, year, duration, director, rate, poster } = input;
 
     try {
-      await connection.query(
+      await pool.query(
         `UPDATE movies
             SET title = ?, year = ?, director = ?, duration = ?, poster = ?, rate = ?
             WHERE id = ?;`,
@@ -70,7 +69,7 @@ export class MovieModel {
       throw new Error("Error updating movie");
     }
 
-    const [movies] = await connection.query(
+    const [movies] = await pool.query(
       `SELECT title, year, director, duration, poster, rate, BIN_TO_UUID(id) id
           FROM movies WHERE id = UUID_TO_BIN(?);`,
       [id]
